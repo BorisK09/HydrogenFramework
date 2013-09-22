@@ -14,14 +14,18 @@
 
 
 
-
-
 #pragma warning (disable:4201) // nonstandard extension used : nameless struct/union
 
 
 
-#define H2_PI    3.14159265f
-#define H2_2PI   6.28318530f
+#define H2_PI             3.14159265f
+#define H2_2PI            6.28318530f
+#define H2_THIRD          0.33333333f
+#define H2_EQN_EPS        1e-9
+#define	H2_IS_ZERO(x)	 ((x) > -H2_EQN_EPS && (x) < H2_EQN_EPS)
+#define	H2_CUBIC_ROOT(x) ((x) > 0.0f ? pow((float)(x), 1.0f/3.0f) : \
+                         ((x) < 0.0f ? -pow((float)-(x), 1.0f/3.0f) : 0.0f))
+
 
 
 
@@ -30,7 +34,7 @@ namespace h2
 	template <class T>
 	T abs(const T& val)
 	{
-		return a < 0 ? -a : a;
+		return val < 0 ? -val : val;
 	}
 
 	
@@ -234,7 +238,6 @@ namespace h2
 	// ax^2 + bx + c = 0 and 
 	// returns number of solutions.
 	// Solutions returns via '*outResult' parameter.
-	// Complex solutions are not supported.
 	int solveSecondDegreeEquation(float a, float b, float c, float* outResult)
 	{
 		if (a == 0) // if 'a' is zero then 1st degree equation
@@ -251,17 +254,17 @@ namespace h2
 
 		} else
 		{
-			float D = b*b - 4*a*c;
+			float D = b*b - 4.0f*a*c;
 
 			if (D > 0)   
 			{
-				outResult[0] = (-b + sqrt(D))/(2*a);
-				outResult[1] = (-b - sqrt(D))/(2*a);
+				outResult[0] = (-b + sqrt(D))/(2.0f*a);
+				outResult[1] = (-b - sqrt(D))/(2.0f*a);
 				return 2;	
 
 			} else if (D == 0)
 			{
-				outResult[0] = -b/(2*a);
+				outResult[0] = -b/(2.0f*a);
 				return 1;
 
 			} else // 'D' is negative - no solutions
@@ -276,11 +279,72 @@ namespace h2
 	// ax^3 + bx^2 + cx + d = 0 and 
 	// returns number of solutions.
 	// Solutions returns via '*outResult' parameter.
-	// Complex solutions are not supported.
-	/*int solveThirdDegreeEquation(float a, float b, float c, float d, float* outResult)
+	int solveThirdDegreeEquation(float a, float b, float c, float d, float* outResult)
 	{
-		return 0;
-	}*/
+		if (a == 0)
+		{
+			return h2::solveSecondDegreeEquation(b, c, d, outResult);
+
+		} else 
+		{
+			// Cardano's method
+
+			// convert to normal form y^3 + Ay^2 + By + C = 0 by dividing to 'a'
+
+			float A, B, C;
+
+			A = b/a;
+			B = c/a;
+			C = d/a;
+
+			float A2 = A*A;
+
+			float offset = H2_THIRD*A;
+
+			float p, q;
+
+			p = H2_THIRD*(-H2_THIRD * A2 + B);
+			q = 0.5f*(2.0f/27*A*A2 - H2_THIRD*A*B + C);
+
+			float D = q*q + p*p*p;
+
+			if (H2_IS_ZERO(D))
+			{
+				if (H2_IS_ZERO(q)) // one triple solution
+				{
+					outResult[0] = -offset;
+					return 1;
+
+				} else //one single and one double solution
+				{	
+					float u = H2_CUBIC_ROOT(-q);
+					outResult[0] = 2.0f*u - offset;
+					outResult[1] = -u - offset;
+					return 2;
+				}
+			} else if (D < 0) // three real solutions
+			{
+				float phi = H2_THIRD*acos(-q/sqrt(-p*p*p));
+				float t = 2.0f * sqrt(-p);
+
+				outResult[0] =  t*cos(phi) - offset;
+				outResult[1] = -t*cos(phi + H2_PI*H2_THIRD) - offset;
+				outResult[2] = -t*cos(phi - H2_PI*H2_THIRD) - offset;
+				return 3;
+
+			} else // one real solution
+			{
+				float sqrtD = sqrt(D);
+
+				float u =  H2_CUBIC_ROOT(sqrtD - q);
+				float v = -H2_CUBIC_ROOT(sqrtD + q);
+
+				outResult[0] = u + v - offset;
+				return 1;
+			}
+		}
+
+	}
 
 
 	template <class T>
