@@ -151,7 +151,7 @@ namespace h2
 			}
 		}
 
-		inline float dot(const Vector2f& vec)
+		inline float dot(const Vector2f& vec) const
 		{
 			return x*vec.x + y*vec.y;
 		}

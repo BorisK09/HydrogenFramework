@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="h2_math_test"
-	ProjectGUID="{B9DBA1E4-A186-4BBE-AEED-7FB9EA33583A}"
-	RootNamespace="h2_math_test"
+	Name="2nd_degree_bezier_closest_point"
+	ProjectGUID="{4FAB5E2B-8541-41E7-A176-032D88FAC33F}"
+	RootNamespace="My2nd_degree_bezier_closest_point"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="196613"
 	>
@@ -60,10 +60,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="SDL2.lib SDL2main.lib"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
-				SubSystem="2"
+				SubSystem="1"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -172,7 +171,7 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\test_1.cpp"
+				RelativePath=".\main.cpp"
 				>
 			</File>
 		</Filter>
@@ -181,6 +180,10 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
+			<File
+				RelativePath=".\functions.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Файлы ресурсов"

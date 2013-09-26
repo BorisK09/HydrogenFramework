@@ -113,7 +113,7 @@ namespace h2
 	template <class T>
 	float dot(const T& inVecA, const T& inVecB)
 	{
-		return inVecA.dot(inVecB);s
+		return inVecA.dot(inVecB);
 	}
 
 
@@ -137,7 +137,7 @@ namespace h2
 	}
 
 
-	template <class T>
+	/*template <class T>
 	T min(const T& a, const T& b)
 	{
 		return a <= b ? a : b;
@@ -149,7 +149,6 @@ namespace h2
 	{
 		return a >= b ? a : b;
 	}
-
 
 	template <class T>
 	T min(const T& a, const T& b, const T& c)
@@ -204,7 +203,7 @@ namespace h2
 			}
 		}
 		return curr_max;
-	}
+	}*/
 
 
 	float slerp(float start, float end, float t)
