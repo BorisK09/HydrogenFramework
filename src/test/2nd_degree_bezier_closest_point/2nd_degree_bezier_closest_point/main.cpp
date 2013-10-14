@@ -39,7 +39,7 @@ void DrawQBezier2D(SDL_Renderer* sdl_renderer, h2::Vector2f p0, h2::Vector2f p1,
 }
 
 template <class T>
-int projectPointToQuadraticBezier(const T& p0, const T& p1, const T& p2, const T& inPoint, T* outPoint)
+int projectPointToQuadraticBezier(const T& p0, const T& p1, const T& p2, const T& inPoint, T* outPoint, int flag)
 {
 	T A, B;
 
@@ -60,44 +60,47 @@ int projectPointToQuadraticBezier(const T& p0, const T& p1, const T& p2, const T
 
 	int nRoots = h2::solveThirdDegreeEquation(a, b, c, d, roots);
 
-	T point;
-
-	//float minDistance;
-
-	for (int i = 0; i < nRoots; i++)
+	if (nRoots == 0)
 	{
-		std::cout << roots[i] << " ";
-
-		if (roots[i] >= 0 && roots[i] <= 1)
-		{
-			//std::cout << roots[i];
-			//std::cout << "   ";
-
-			float t = roots[i];
-
-			point = (1.0f-t)*(1.0f-t)*p0 + 2.0f*t*(1.0f-t)*p1 + t*t*p2;
-		}
-
-		*outPoint = point;
-
-		/*minDist = h2::distanance(inPoint, points[0]);
-
-		for (int j = 0; j < nPoints; j++)
-		{
-			if (h2::distanance(inPoint, points[j]) < 100.0)
-			{
-				nearestPoint = points[j];
-			}
-		}*/
+		return 0;
 	}
+	else
+	{
 
+		float curr_t, colsest_t;
+		float currDistance, minDistance;
+		int nProj = 0;
 
+		for (int i = 0; i < nRoots; i++)
+		{
+			curr_t = roots[i];
 
-	//std::cout << "  point: " << point.x << "   " << point.y;
+			if (curr_t >= 0 && curr_t <= 1.0f)
+			{
+				if ( nProj == 0)
+				{
+					minDistance = h2::distanance(inPoint, h2::quadraticBezier(p0, p1, p2, curr_t));
+					colsest_t = curr_t;
+					nProj++;
+				} 
+				else
+				{
+					currDistance = h2::distanance(inPoint, h2::quadraticBezier(p0, p1, p2, curr_t));
 
-	std::cout << std::endl;
+					if (currDistance < minDistance)
+					{
+						minDistance = currDistance;
+						colsest_t = curr_t;
+					}
+					nProj++;
+				}
+			}
+		}
+		
+		*outPoint = h2::quadraticBezier(p0, p1, p2, colsest_t);
 
-	return 1;
+		return 1;
+	}
 }
 
 
@@ -152,9 +155,16 @@ int main(int argc, char* argv[])
 
 		h2::Vector2f proj;
 
-		projectPointToQuadraticBezier(bezP0, bezP1, bezP2, 
-								      h2::Vector2f((float)mouseX, (float)mouseY), 
-								      &proj);
+		h2::Vector2f mPos;
+
+		mPos.x = (float)mouseX;
+		mPos.y = (float)mouseY;
+
+		if (projectPointToQuadraticBezier(bezP0, bezP1, bezP2, mPos, &proj, 1) == 0)
+		{
+			proj.x = 50.0f;
+			proj.y = 50.0f;
+		}
 
 		SDL_Rect proj_rect = {(int)proj.x - 2, (int)proj.y - 2, 4, 4};
 

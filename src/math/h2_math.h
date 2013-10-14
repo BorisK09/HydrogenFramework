@@ -88,19 +88,31 @@ namespace h2
 
 	float distanance(const h2::Vector2f& pointA, const h2::Vector2f& pointB)
 	{
-		return sqrt(pointA.x*pointB.x + pointA.y*pointB.y);
+		float BAx = pointB.x - pointA.x;
+		float BAy = pointB.y - pointA.y;
+
+		return sqrt(BAx*BAx + BAy*BAy);
 	}
 
 
 	float distanance(const h2::Vector3f& pointA, const h2::Vector3f& pointB)
 	{
-		return sqrt(pointA.x*pointB.x + pointA.y*pointB.y + pointA.z*pointB.z);
+		float BAx = pointB.x - pointA.x;
+		float BAy = pointB.y - pointA.y;
+		float BAz = pointB.z - pointA.z;
+
+		return sqrt(BAx*BAx + BAy*BAy + BAz*BAz);
 	}
 
 
 	float distanance(const h2::Vector4f& pointA, const h2::Vector4f& pointB)
 	{
-		return sqrt(pointA.x*pointB.x + pointA.y*pointB.y + pointA.z*pointB.z + pointA.w*pointB.w);
+		float BAx = pointB.x - pointA.x;
+		float BAy = pointB.y - pointA.y;
+		float BAz = pointB.z - pointA.z;
+		float BAw = pointB.w - pointA.w;
+
+		return sqrt(BAx*BAx + BAy*BAy + BAz*BAz + BAw*BAw);
 	}
 
 
@@ -108,6 +120,13 @@ namespace h2
 	{
 		return 0;
 	}*/
+
+
+	template <class T>
+	float dot(float a, float b)
+	{
+		return a * b;
+	}
 
 
 	template <class T>
@@ -358,4 +377,32 @@ namespace h2
 int h2_math_test()
 {
 	return 0;
+}
+
+// Bezier Curves
+namespace h2
+{
+	template <class T>
+	T linearBezier(T p0, T p1, float t)
+	{
+		return (1.0f - t)*p0 + t*p1;
+	}
+
+
+	template <class T>
+	T quadraticBezier(T p0, T p1, T p2, float t)
+	{
+		float T = 1.0f - t;
+		return T*T*p0 + 2.0f*t*T*p1 + t*t*p2;
+	}
+
+
+	template <class T>
+	T cubicBezier(T p0, T p1, T p2, T p3, float t)
+	{
+		float T = 1.0f - t;
+		float TT = T*T;
+		float tt = t*t;
+		return TT*T*p0 + 3.0f*t*TT*p1 + 3.0f*tt*T*p2 + tt*t*p3;
+	}
 }
